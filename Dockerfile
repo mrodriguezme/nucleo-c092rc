@@ -1,0 +1,69 @@
+# SPDX-License-Identifier: MIT
+#
+# Copyright 2026 Michael Rodriguez <me@mrodriguez.me>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+# persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+# OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# This Dockerfile documents how the toolchain image was built. It is not guaranteed to rebuild identically in the
+# future. To get the toolchain, use the image referenced in the README instead of building this yourself.
+
+FROM debian:trixie-slim@sha256:04634311a8d5fc442b6eb06d792293c4f3e2268652ca7634e00ce8ef5cc0a28a
+
+ARG SNAPSHOT=20260913T202244Z
+ARG USERNAME=builder
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+COPY Gemfile Gemfile.lock /tmp/lock/
+
+RUN groupadd --gid $USER_GID $USERNAME                                                               && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME                                             && \
+    echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/${SNAPSHOT} trixie main" \
+        > /etc/apt/sources.list.d/snapshot.list                                                      && \
+    rm -f /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list                               && \
+    apt-get update                                                                                   && \
+    ARCH="$(dpkg --print-architecture)"                                                              && \
+    if [ "$ARCH" = "arm64" ]; then                                                                      \
+        NINJA_VER="1.12.1-1+b1";                                                                        \
+    else                                                                                                \
+        NINJA_VER="1.12.1-1";                                                                           \
+    fi                                                                                               && \
+    apt-get install -y --no-install-recommends                                                          \
+    build-essential=12.12                                                                               \
+    clangd=1:19.0-63                                                                                    \
+    cmake=3.31.6-2                                                                                      \
+    doxygen=1.9.8+ds-2.1                                                                                \
+    gcc-arm-none-eabi=15:14.2.rel1-1                                                                    \
+    gdb-multiarch=16.3-1                                                                                \
+    graphviz=2.42.4-3                                                                                   \
+    libicu76=76.1-4                                                                                     \
+    ninja-build="$NINJA_VER"                                                                            \
+    picolibc-arm-none-eabi=1.8.10-2                                                                     \
+    sudo=1.9.16p2-3+deb13u2                                                                             \
+    ruby3.3-dev=3.3.8-2                                                                                 \
+    ruby=1:3.3+b1                                                                                    && \
+    rm -rf /var/lib/apt/lists/*                                                                      && \
+    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME                              && \
+    chmod 0440 /etc/sudoers.d/$USERNAME                                                              && \
+    gem install bundler -v 4.0.20                                                                    && \
+    cd /tmp/lock                                                                                     && \
+    bundle config set --local frozen true                                                            && \
+    bundle config set --local path.system true                                                       && \
+    bundle install                                                                                   && \
+    rm -rf /var/lib/gems/*/cache                                                                     && \
+    gem cleanup                                                                                      && \
+    rm -rf /tmp/lock
+
+USER $USERNAME
+CMD ["bash"]

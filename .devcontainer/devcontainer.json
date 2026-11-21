@@ -1,0 +1,35 @@
+{
+  "name": "nucleo-c092rc",
+  "image": "mrodriguez0/nucleo-c092rc:v1.0.0",
+  "remoteUser": "builder",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mcu-debug.debug-tracker-vscode",
+        "marus25.cortex-debug",
+        "mcu-debug.peripheral-viewer",
+        "mcu-debug.memory-view",
+        "mcu-debug.rtos-views",
+        "EditorConfig.EditorConfig",
+        "ms-vscode.cmake-tools",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "throw-the-switch.vscode-ceedling"
+      ],
+      "settings": {
+        "clangd.path": "/usr/bin/clangd",
+        "C_Cpp.intelliSenseEngine": "disabled",
+        "C_Cpp.autocomplete": "disabled",
+        "C_Cpp.errorSquiggles": "disabled",
+        "cmake.configureOnOpen": false,
+        "clangd.arguments": [
+          "--header-insertion=never"
+        ]
+      }
+    }
+  },
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+  ]
+}

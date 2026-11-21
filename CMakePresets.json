@@ -1,0 +1,54 @@
+{
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 31,
+        "patch": 6
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "description": "Build base configuration",
+            "generator": "Ninja",
+            "toolchainFile": "${sourceDir}/cmake/toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "CMAKE_COLOR_DIAGNOSTICS": {
+                    "type": "BOOL",
+                    "value": "ON"
+                }
+            },
+            "binaryDir": "${sourceDir}/build_${presetName}"
+        },
+        {
+            "name": "debug",
+            "hidden": false,
+            "inherits": "base",
+            "description": "Base configuration for Debug builds",
+            "displayName": "Build debug version",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Debug"
+                }
+            }
+        },
+        {
+            "name": "release",
+            "hidden": false,
+            "inherits": "base",
+            "description": "Base configuration for Release builds",
+            "displayName": "Build release version",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Release"
+                }
+            }
+        }
+    ]
+}

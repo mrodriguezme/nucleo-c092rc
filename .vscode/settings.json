@@ -1,0 +1,14 @@
+{
+    "cortex-debug.armToolchainPath": "/usr/bin",
+    "cortex-debug.gdbPath": "/usr/bin/gdb-multiarch",
+    "cmake.debugConfig": {
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb-multiarch"
+    },
+    "editor.rulers": [
+        120
+    ],
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json"
+}
