@@ -346,16 +346,16 @@ constexpr uint32_t GPIO_AFSEL_AF15 = 0b1111;
 //
 // BRy: Port x reset I/O y (y = 15 to 0)
 // --------------------------------------------------------------------------------------------------------
-constexpr uint32_t GPIO_BRR_BR0 = 1 << 0;
-constexpr uint32_t GPIO_BRR_BR1 = 1 << 1;
-constexpr uint32_t GPIO_BRR_BR2 = 1 << 2;
-constexpr uint32_t GPIO_BRR_BR3 = 1 << 3;
-constexpr uint32_t GPIO_BRR_BR4 = 1 << 4;
-constexpr uint32_t GPIO_BRR_BR5 = 1 << 5;
-constexpr uint32_t GPIO_BRR_BR6 = 1 << 6;
-constexpr uint32_t GPIO_BRR_BR7 = 1 << 7;
-constexpr uint32_t GPIO_BRR_BR8 = 1 << 8;
-constexpr uint32_t GPIO_BRR_BR9 = 1 << 9;
+constexpr uint32_t GPIO_BRR_BR0	 = 1 << 0;
+constexpr uint32_t GPIO_BRR_BR1	 = 1 << 1;
+constexpr uint32_t GPIO_BRR_BR2	 = 1 << 2;
+constexpr uint32_t GPIO_BRR_BR3	 = 1 << 3;
+constexpr uint32_t GPIO_BRR_BR4	 = 1 << 4;
+constexpr uint32_t GPIO_BRR_BR5	 = 1 << 5;
+constexpr uint32_t GPIO_BRR_BR6	 = 1 << 6;
+constexpr uint32_t GPIO_BRR_BR7	 = 1 << 7;
+constexpr uint32_t GPIO_BRR_BR8	 = 1 << 8;
+constexpr uint32_t GPIO_BRR_BR9	 = 1 << 9;
 constexpr uint32_t GPIO_BRR_BR10 = 1 << 10;
 constexpr uint32_t GPIO_BRR_BR11 = 1 << 11;
 constexpr uint32_t GPIO_BRR_BR12 = 1 << 12;
