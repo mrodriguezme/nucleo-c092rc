@@ -47,7 +47,7 @@ constexpr int VECTOR_MCU_BASE = 16;
 	X(usb, 8)                         \
 	X(dma1_channel1, 9)               \
 	X(dma1_channel2_3, 10)            \
-	X(dmamux_dma1_cahnnel4_5_6_7, 11) \
+	X(dmamux_dma1_channel4_5_6_7, 11) \
 	X(adc, 12)                        \
 	X(tim1_brk_up_trg_com, 13)        \
 	X(tim1_cc, 14)                    \
