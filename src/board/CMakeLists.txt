@@ -19,7 +19,17 @@ add_library(board INTERFACE)
 
 target_sources(
 	board INTERFACE
+	portable/mcu/gpio.h
+	portable/mcu/rcc.h
+	portable/display.c
+	portable/display.h
+	portable/portable.c
+	portable/portable.h
 	portable/startup.c
+	board.c
+	board.h
+	display.c
+	display.h
 )
 
 set_target_properties(

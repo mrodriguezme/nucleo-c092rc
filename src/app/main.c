@@ -17,9 +17,12 @@
 // SOFTWARE.
 
 #include <stdlib.h>
+#include "board/board.h"
 
 int main()
 {
+	board_init();
+
 	for (;;)
 		;
 

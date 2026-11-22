@@ -18,22 +18,98 @@
 
 #pragma once
 
+#include "common/mmio.h"
 #include "common/util.h"
 
 // ----------------------------------------------------------------------------------------
-// GPIO MMIO helpers
+// GPIO MMIO addresses
 // ----------------------------------------------------------------------------------------
-#define GPIO_MODER(base)   (*(volatile uint32_t *)((base) + 0x00))
-#define GPIO_OTYPER(base)  (*(volatile uint32_t *)((base) + 0x04))
-#define GPIO_OSPEEDR(base) (*(volatile uint32_t *)((base) + 0x08))
-#define GPIO_PUPDR(base)   (*(volatile uint32_t *)((base) + 0x0C))
-#define GPIO_IDR(base)	   (*(volatile uint32_t *)((base) + 0x10))
-#define GPIO_ODR(base)	   (*(volatile uint32_t *)((base) + 0x14))
-#define GPIO_BSRR(base)	   (*(volatile uint32_t *)((base) + 0x18))
-#define GPIO_LCKR(base)	   (*(volatile uint32_t *)((base) + 0x1C))
-#define GPIO_AFRL(base)	   (*(volatile uint32_t *)((base) + 0x20))
-#define GPIO_AFRH(base)	   (*(volatile uint32_t *)((base) + 0x24))
-#define GPIO_BRR(base)	   (*(volatile uint32_t *)((base) + 0x28))
+#define GPIO_MODER(base)   ((base) + 0x00)
+#define GPIO_OTYPER(base)  ((base) + 0x04)
+#define GPIO_OSPEEDR(base) ((base) + 0x08)
+#define GPIO_PUPDR(base)   ((base) + 0x0C)
+#define GPIO_IDR(base)	   ((base) + 0x10)
+#define GPIO_ODR(base)	   ((base) + 0x14)
+#define GPIO_BSRR(base)	   ((base) + 0x18)
+#define GPIO_LCKR(base)	   ((base) + 0x1C)
+#define GPIO_AFRL(base)	   ((base) + 0x20)
+#define GPIO_AFRH(base)	   ((base) + 0x24)
+#define GPIO_BRR(base)	   ((base) + 0x28)
+
+// ----------------------------------------------------------------------------------------
+// GPIO helper macros
+// ----------------------------------------------------------------------------------------
+#define static_assert_port_valid(port)                                                                  \
+	static_assert(((port) == GPIOA) || ((port) == GPIOB) || ((port) == GPIOC) || ((port) == GPIOF), \
+		      "Port not valid");
+
+#define static_assert_pin_valid(pin) static_assert((pin) <= 15, "Pin not valid (must be between 0..15)")
+
+#define gpio_port_pin_mode_set(port, pin, mode)                                                          \
+	do {                                                                                             \
+		static_assert_port_valid((port));                                                        \
+		static_assert_pin_valid((pin));                                                          \
+                                                                                                         \
+		static_assert(((mode) == GPIO_MODER_MODE_INPUT) || ((mode) == GPIO_MODER_MODE_OUTPUT) || \
+				      ((mode) == GPIO_MODER_MODE_ALTERNATE_FUNCTION) ||                  \
+				      ((mode) == GPIO_MODER_MODE_ANALOG),                                \
+			      "Port mode not valid");                                                    \
+                                                                                                         \
+		mmio_rmw_mask32(GPIO_MODER((port)), 0x3 << ((pin) * 2), (mode));                         \
+	} while (0)
+
+#define gpio_pin_output_type_set(port, pin, ot)                         \
+	do {                                                            \
+		static_assert_port_valid((port));                       \
+		static_assert_pin_valid((pin));                         \
+                                                                        \
+		mmio_rmw_mask32(GPIO_OTYPER((port)), 1 << (pin), (ot)); \
+	} while (0)
+
+#define gpio_pin_output_speed_set(port, pin, ospeed)                                                               \
+	do {                                                                                                       \
+		static_assert_port_valid((port));                                                                  \
+		static_assert_pin_valid((pin));                                                                    \
+                                                                                                                   \
+		static_assert(((ospeed) == GPIO_OSPEEDR_VERY_LOW_SPEED) || ((ospeed) == GPIO_OSPEEDR_LOW_SPEED) || \
+				      ((ospeed) == GPIO_OSPEEDR_HIGH_SPEED) ||                                     \
+				      ((ospeed) == GPIO_OSPEEDR_VERY_HIGH_SPEED),                                  \
+			      "Speed not valid");                                                                  \
+                                                                                                                   \
+		mmio_rmw_mask32(GPIO_OSPEEDR((port)), 0x3 << ((pin) * 2), (ospeed));                               \
+	} while (0)
+
+#define gpio_pin_pupd_set(port, pin, pupd)                                                                      \
+	do {                                                                                                    \
+		static_assert_port_valid((port));                                                               \
+		static_assert_pin_valid((pin));                                                                 \
+                                                                                                                \
+		static_assert(((pupd) == GPIO_PUPD_NO_PULL_UP_OR_PULL_DOWN) || ((pupd) == GPIO_PUPD_PULL_UP) || \
+				      ((pupd) == GPIO_PUPD_PULL_DOWN),                                          \
+			      "Resistor type not valid");                                                       \
+                                                                                                                \
+		mmio_rmw_mask32(GPIO_PUPDR((port)), 0x3 << ((pin) * 2), (pupd));                                \
+	} while (0)
+
+#define gpio_pin_set_high(port, pin)                                   \
+	do {                                                           \
+		static_assert_port_valid((port));                      \
+		static_assert_pin_valid((pin));                        \
+                                                                       \
+		mmio_write32(GPIO_BSRR((port)), UINT32_C(1) << (pin)); \
+	} while (0)
+
+#define gpio_pin_set_low(port, pin)                                         \
+	do {                                                                \
+		static_assert_port_valid((port));                           \
+		static_assert_pin_valid((pin));                             \
+                                                                            \
+		mmio_write32(GPIO_BSRR((port)), UINT32_C(1) << (pin + 16)); \
+	} while (0)
+
+#define GPIO_PIN_DEFINE(name, port, pin)              \
+	constexpr uintptr_t name##_PORT = GPIO##port; \
+	constexpr uint32_t name##_PIN	= (pin)
 
 // ----------------------------------------------------------------------------------------
 // Base addresses for each GPIO module
@@ -98,6 +174,9 @@ constexpr uint32_t GPIO_OTYPER_OT13 = 1 << 13;
 constexpr uint32_t GPIO_OTYPER_OT14 = 1 << 14;
 constexpr uint32_t GPIO_OTYPER_OT15 = 1 << 15;
 
+constexpr uint32_t GPIO_OTYPER_PUSH_PULL  = 0;
+constexpr uint32_t GPIO_OTYPER_OPEN_DRAIN = 1;
+
 // ----------------------------------------------------------------------------------------
 // GPIO port output speed register (GPIOx_OSPEEDR) (x = A, B, C, F)
 //
@@ -126,7 +205,7 @@ constexpr uint32_t GPIO_OSPEEDR_OSPEED15 = GENMASK32(31, 30);
 constexpr uint32_t GPIO_OSPEEDR_VERY_LOW_SPEED	= 0b00;
 constexpr uint32_t GPIO_OSPEEDR_LOW_SPEED	= 0b01;
 constexpr uint32_t GPIO_OSPEEDR_HIGH_SPEED	= 0b10;
-constexpr uint32_t GPIO_OSPEEDR_VERY_HIGH_SPEED = 0x11;
+constexpr uint32_t GPIO_OSPEEDR_VERY_HIGH_SPEED = 0b11;
 
 // ----------------------------------------------------------------------------------------
 // GPIO port pull-up/pull-down register (GPIOx_PUPDR) (x = A, B, C, F) register layout
@@ -153,9 +232,9 @@ constexpr uint32_t GPIO_PUPDR_PUPD15 = GENMASK32(31, 30);
 // ----------------------------------------------------------------------------------------
 // GPIO port pull-up/pull-down register (GPIOx_PUPDR) (x = A, B, C, F) register values
 // ----------------------------------------------------------------------------------------
-constexpr uint32_t GPIO_PUPDR_NO_PULL_UP_OR_PULL_DOWN = 0b00;
-constexpr uint32_t GPIO_PUPDR_PULL_UP		      = 0b01;
-constexpr uint32_t GPIO_PUPDR_PULL_DOWN		      = 0b10;
+constexpr uint32_t GPIO_PUPD_NO_PULL_UP_OR_PULL_DOWN = 0b00;
+constexpr uint32_t GPIO_PUPD_PULL_UP		     = 0b01;
+constexpr uint32_t GPIO_PUPD_PULL_DOWN		     = 0b10;
 
 // ----------------------------------------------------------------------------------------
 // GPIO port input data register (GPIOx_IDR) (x = A, B, C, F) register layout
