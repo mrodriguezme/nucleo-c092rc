@@ -20,4 +20,5 @@
 
 #include <stdint.h>
 
+#define mhz_to_hz(mhz) ((mhz) * UINT32_C(1000000))
 #define GENMASK32(hi, lo) (((UINT32_C(1) << ((hi) - (lo) + 1)) - 1) << (lo))

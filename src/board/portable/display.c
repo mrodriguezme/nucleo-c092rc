@@ -17,7 +17,9 @@
 // SOFTWARE.
 
 #include "display.h"
+#include "config.h"
 #include "mcu/gpio.h"
+#include "mcu/util.h"
 
 GPIO_PIN_DEFINE(DISPLAY_PIN_E, A, 0);
 GPIO_PIN_DEFINE(DISPLAY_PIN_RS, A, 1);
@@ -37,6 +39,14 @@ GPIO_PIN_DEFINE(DISPLAY_PIN_DB7, C, 5);
 		gpio_pin_set_low((port), (pin));                                        \
 	} while (0)
 
+#define pin_level_set(port, pin, level)                   \
+	do {                                              \
+		if ((level))                              \
+			gpio_pin_set_high((port), (pin)); \
+		else                                      \
+			gpio_pin_set_low((port), (pin));  \
+	} while (0)
+
 static void gpio_init()
 {
 	pin_init_output(DISPLAY_PIN_E_PORT, DISPLAY_PIN_E_PIN);
@@ -45,6 +55,41 @@ static void gpio_init()
 	pin_init_output(DISPLAY_PIN_DB5_PORT, DISPLAY_PIN_DB5_PIN);
 	pin_init_output(DISPLAY_PIN_DB6_PORT, DISPLAY_PIN_DB6_PIN);
 	pin_init_output(DISPLAY_PIN_DB7_PORT, DISPLAY_PIN_DB7_PIN);
+}
+
+void hd44780_delay_us(uint16_t us)
+{
+	delay_us(BOARD_CPU_CLKFREQ_HZ, us);
+}
+
+void hd44780_rs_pin_set(bool level)
+{
+	pin_level_set(DISPLAY_PIN_RS_PORT, DISPLAY_PIN_RS_PIN, level);
+}
+
+void hd44780_e_pin_set(bool level)
+{
+	pin_level_set(DISPLAY_PIN_E_PORT, DISPLAY_PIN_E_PIN, level);
+}
+
+void hd44780_db4_pin_set(bool level)
+{
+	pin_level_set(DISPLAY_PIN_DB4_PORT, DISPLAY_PIN_DB4_PIN, level);
+}
+
+void hd44780_db5_pin_set(bool level)
+{
+	pin_level_set(DISPLAY_PIN_DB5_PORT, DISPLAY_PIN_DB5_PIN, level);
+}
+
+void hd44780_db6_pin_set(bool level)
+{
+	pin_level_set(DISPLAY_PIN_DB6_PORT, DISPLAY_PIN_DB6_PIN, level);
+}
+
+void hd44780_db7_pin_set(bool level)
+{
+	pin_level_set(DISPLAY_PIN_DB7_PORT, DISPLAY_PIN_DB7_PIN, level);
 }
 
 void board_portable_display_init()

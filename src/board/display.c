@@ -17,9 +17,10 @@
 // SOFTWARE.
 
 #include "display.h"
-#include "portable/display.h"
+#include "drivers/hd44780.h"
 
 void board_display_init()
 {
-	board_portable_display_init();
+	hd44780_init();
+	hd44780_printf("NUCLEO-C092RC!");
 }

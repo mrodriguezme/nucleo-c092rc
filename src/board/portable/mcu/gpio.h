@@ -76,7 +76,7 @@
 				      ((ospeed) == GPIO_OSPEEDR_VERY_HIGH_SPEED),                                  \
 			      "Speed not valid");                                                                  \
                                                                                                                    \
-		mmio_rmw_mask32(GPIO_OSPEEDR((port)), 0x3 << ((pin) * 2), (ospeed));                               \
+		mmio_rmw_mask32(GPIO_OSPEEDR((port)), UINT32_C(0x3) << ((pin) * 2), (ospeed));                     \
 	} while (0)
 
 #define gpio_pin_pupd_set(port, pin, pupd)                                                                      \
@@ -88,7 +88,7 @@
 				      ((pupd) == GPIO_PUPD_PULL_DOWN),                                          \
 			      "Resistor type not valid");                                                       \
                                                                                                                 \
-		mmio_rmw_mask32(GPIO_PUPDR((port)), 0x3 << ((pin) * 2), (pupd));                                \
+		mmio_rmw_mask32(GPIO_PUPDR((port)), UINT32_C(0x3) << ((pin) * 2), (pupd));                      \
 	} while (0)
 
 #define gpio_pin_set_high(port, pin)                                   \
@@ -99,12 +99,12 @@
 		mmio_write32(GPIO_BSRR((port)), UINT32_C(1) << (pin)); \
 	} while (0)
 
-#define gpio_pin_set_low(port, pin)                                         \
-	do {                                                                \
-		static_assert_port_valid((port));                           \
-		static_assert_pin_valid((pin));                             \
-                                                                            \
-		mmio_write32(GPIO_BSRR((port)), UINT32_C(1) << (pin + 16)); \
+#define gpio_pin_set_low(port, pin)                                           \
+	do {                                                                  \
+		static_assert_port_valid((port));                             \
+		static_assert_pin_valid((pin));                               \
+                                                                              \
+		mmio_write32(GPIO_BSRR((port)), UINT32_C(1) << ((pin) + 16)); \
 	} while (0)
 
 #define GPIO_PIN_DEFINE(name, port, pin)              \

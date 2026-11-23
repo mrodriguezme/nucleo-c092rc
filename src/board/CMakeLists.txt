@@ -37,4 +37,5 @@ set_target_properties(
 	INTERFACE_LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/portable/board.ld"
 )
 
+target_link_libraries(board INTERFACE drivers)
 toolchain_target_linker_script_set(board "${CMAKE_CURRENT_SOURCE_DIR}/portable/board.ld")

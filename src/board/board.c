@@ -18,8 +18,10 @@
 
 #include "board.h"
 #include "portable/portable.h"
+#include "display.h"
 
 void board_init()
 {
 	board_portable_init();
+	board_display_init();
 }

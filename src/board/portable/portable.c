@@ -23,6 +23,6 @@
 
 void board_portable_init()
 {
-	mmio_set32(RCC_IOPENR, RCC_IOPENR_GPIOAEN);
+	mmio_set32(RCC_IOPENR, RCC_IOPENR_GPIOAEN | RCC_IOPENR_GPIOBEN | RCC_IOPENR_GPIOCEN);
 	board_portable_display_init();
 }
