@@ -22,5 +22,9 @@
 void board_display_init()
 {
 	hd44780_init();
-	hd44780_printf("NUCLEO-C092RC!");
+}
+
+void board_display_puts(const char *src)
+{
+	hd44780_puts(src);
 }

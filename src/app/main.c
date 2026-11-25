@@ -18,10 +18,12 @@
 
 #include <stdlib.h>
 #include "board/board.h"
+#include "board/display.h"
 
 int main()
 {
 	board_init();
+	board_display_puts("NUCLEO-C092RC!");
 
 	for (;;)
 		;

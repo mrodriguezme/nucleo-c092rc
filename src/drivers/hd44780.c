@@ -107,3 +107,9 @@ void hd44780_printf(const char *s, ...)
 	for (int i = 0; i < len; ++i)
 		send_byte(HD44780_RS_DATA, buf[i], TIMEOUT_US_DEFAULT);
 }
+
+void hd44780_puts(const char *s)
+{
+	for (uint32_t len = 0; *s && (len < NUM_COLS); ++len, ++s)
+		send_byte(HD44780_RS_DATA, *s, TIMEOUT_US_DEFAULT);
+}

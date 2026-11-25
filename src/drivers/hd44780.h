@@ -26,6 +26,7 @@ void hd44780_init(void);
 // High level interfaces
 // ----------------------------------------------------------------------------------------
 void hd44780_printf(const char *s, ...);
+void hd44780_puts(const char *s);
 
 // ----------------------------------------------------------------------------------------
 // Functions required to be supplied by application
